@@ -33,7 +33,7 @@ for ax, image, label in zip(axes, digits.images, digits.target):
     ax.imshow(image, cmap=plt.cm.gray_r, interpolation="nearest")
     ax.set_title("Training: %i" % label)
 
-print(f"Image size of this dataset is {digits.images[0].shape}")
+print(f"\nImage size of this dataset is {digits.images[0].shape}")
 #PART: data pre-processing -- to remove some noise, to normalize data, format the data to be consumed by mode
 # flatten the images
 images = {}
@@ -62,7 +62,7 @@ def resize_and_predict(size = 8):
     best_acc = -1.0
     best_model = None
     best_h_params = None
-
+    print("C          Gamma      Train_Acc  Val_Acc    Test_Acc\n")
     # 2. For every combination-of-hyper-parameter values
     for cur_h_params in h_param_comb:
 
@@ -82,35 +82,23 @@ def resize_and_predict(size = 8):
 
         # print(cur_h_params)
         #PART: get dev set predictions
+        predicted_train = clf.predict(X_train)
         predicted_dev = clf.predict(X_dev)
-
+        predicted_test = clf.predict(X_test)
         # 2.b compute the accuracy on the validation set
-        cur_acc = metrics.accuracy_score(y_pred=predicted_dev, y_true=y_dev)
+        cur_train_acc = metrics.accuracy_score(y_pred=predicted_train, y_true=y_train)
+        cur_val_acc = metrics.accuracy_score(y_pred=predicted_dev, y_true=y_dev)
+        cur_test_acc = metrics.accuracy_score(y_pred=predicted_test, y_true=y_test)
+        #print(f"C:{cur_h_params['C']} Gamma:{cur_h_params['gamma']}, {cur_train_acc} {cur_val_acc} {cur_test_acc}")
+        print("{:<10.4f} {:<10.4f} {:<10.4f} {:<10.4f} {:<10.4f}".format(cur_h_params['C'], cur_h_params['gamma'], cur_train_acc, cur_val_acc, cur_test_acc))
 
         # 3. identify the combination-of-hyper-parameter for which validation set accuracy is the highest. 
-        if cur_acc > best_acc:
-            best_acc = cur_acc
+        if cur_test_acc > best_acc:
+            best_acc = cur_test_acc
             best_model = clf
             best_h_params = cur_h_params
-            print("Found new best acc with :"+str(cur_h_params))
-            print("New best val accuracy:" + str(cur_acc))
-
-
-
-        
-    #PART: Get test set predictions
-    # Predict the value of the digit on the test subset
-    predicted = best_model.predict(X_test)
-
-    #PART: Sanity check of predictions
-
-
-    # 4. report the test set accurancy with that best model.
-    #PART: Compute evaluation metrics
-    print(
-        f"Classification report for classifier {clf}:\n"
-        f"{metrics.classification_report(y_test, predicted)}\n"
-    )
+            #print("Found new best acc with :"+str(cur_h_params))
+            #print("New best val accuracy:" + str(cur_acc))'''
 
     print("Best hyperparameters were:")
     print(cur_h_params)
