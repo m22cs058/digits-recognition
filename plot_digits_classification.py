@@ -7,6 +7,8 @@
 # Import datasets, classifiers and performance metrics
 from sklearn import datasets, svm, metrics
 import pdb
+from sklearn.tree import DecisionTreeClassifier
+import numpy as np
 
 from utils import (
     preprocess_digits,
@@ -40,35 +42,43 @@ data, label = preprocess_digits(digits)
 # housekeeping
 del digits
 
-
-x_train, y_train, x_dev, y_dev, x_test, y_test = train_dev_test_split(
-    data, label, train_frac, dev_frac
-)
-
-# PART: Define the model
-# Create a classifier: a support vector classifier
-clf = svm.SVC()
-# define the evaluation metric
+n_cv = 5
+results = {}
+random = [14, 56, 290, 456, 78]
 metric = metrics.accuracy_score
+for i in range(n_cv):
+
+    x_train, y_train, x_dev, y_dev, x_test, y_test = train_dev_test_split(
+        data, label, train_frac, dev_frac, random_state = random[i]
+    )
+
+    # PART: Define the model
+    # Create a classifier: a support vector classifier
+    models_of_choice = {'svm':svm.SVC(), 'decision_tree':DecisionTreeClassifier()}
+    for clf_name in models_of_choice:
+    # define the evaluation metric
+        best_model = models_of_choice[clf_name]
+        '''actual_model_path = tune_and_save(
+            clf, x_train, y_train, x_dev, y_dev, metric, h_param_comb[clf_name], model_path=None
+        )'''
 
 
-actual_model_path = tune_and_save(
-    clf, x_train, y_train, x_dev, y_dev, metric, h_param_comb, model_path=None
-)
+        # 2. load the best_model
+        #best_model = load(actual_model_path)
+        best_model.fit(x_train, y_train)
+        # PART: Get test set predictions
+        # Predict the value of the digit on the test subset
+        predicted = best_model.predict(x_test)
+        if not clf_name in results:
+            results[clf_name] = []
+        results[clf_name].append(metric(y_pred = predicted, y_true = y_test))
 
-
-# 2. load the best_model
-best_model = load(actual_model_path)
-
-# PART: Get test set predictions
-# Predict the value of the digit on the test subset
-predicted = best_model.predict(x_test)
-
-pred_image_viz(x_test, predicted)
-
-# 4. report the test set accurancy with that best model.
-# PART: Compute evaluation metrics
-print(
-    f"Classification report for classifier {clf}:\n"
-    f"{metrics.classification_report(y_test, predicted)}\n"
-)
+        # 4. report the test set accurancy with that best model.
+        # PART: Compute evaluation metrics
+        '''print(
+            f"Classification report for classifier {best_model}:\n"
+            f"{metrics.classification_report(y_test, predicted)}\n"
+        )'''
+print(results)
+print("Mean and standard deviation for svm are {:.4} and {:.4}".format(np.mean(results['svm']), np.std(results['svm'])))
+print("Mean and standard deviation for decision_tree are {:.4} and {:.4}".format(np.mean(results['decision_tree']), np.std(results['decision_tree'])))
