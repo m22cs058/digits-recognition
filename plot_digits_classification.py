@@ -64,9 +64,9 @@ for i in range(n_cv):
 
         
 print(results)
-print("Mean and standard deviation for svm are {:.4} and {:.4}".format(np.mean(results['svm']), np.std(results['svm'])))
-print("Mean and standard deviation for decision_tree are {:.4} and {:.4}".format(np.mean(results['decision_tree']), np.std(results['decision_tree'])))
-print("Actual Vs Predicted Labels using SVM:")
-print(list(zip(list(y_test), list(predicted['svm']))))
-print("Actual Vs Predicted Labels using Decision Tree:")
-print(list(zip(list(y_test), list(predicted['decision_tree']))))
+#print("Mean and standard deviation for svm are {:.4} and {:.4}".format(np.mean(results['svm']), np.std(results['svm'])))
+#print("Mean and standard deviation for decision_tree are {:.4} and {:.4}".format(np.mean(results['decision_tree']), np.std(results['decision_tree'])))
+#print("Actual Vs Predicted Labels using SVM:")
+#print(list(zip(list(y_test), list(predicted['svm']))))
+#print("Actual Vs Predicted Labels using Decision Tree:")
+#print(list(zip(list(y_test), list(predicted['decision_tree']))))
