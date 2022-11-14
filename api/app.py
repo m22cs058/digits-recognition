@@ -21,7 +21,16 @@ def sum():
 
 @app.route("/predict", methods = ["POST"])
 def predict_class():
-    image = request.json['image']
+    image1 = request.json['image1']
+    image2 = request.json['image2']
     print("Loading successful")
-    predicted = model.predict([image])
-    return {"y_predicted" : int(predicted[0])}
+    predicted1 = model.predict([image1])
+    predicted2 = model.predict([image2])
+    if predicted1 == predicted2:
+        return "Same Digit"
+    else:
+        return "Different Digit"
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0",port=5000)
