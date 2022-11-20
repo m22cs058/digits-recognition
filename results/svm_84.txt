@@ -1,0 +1,1 @@
+test accuracy : 0.9710789766407119test macro-f1 : 0.9715304006273232model saved atmodels/svm_84.joblib

@@ -1,0 +1,1 @@
+test accuracy : 0.8364849833147943test macro-f1 : 0.8378361893178322model saved atmodels/decision_tree_84.joblib

@@ -19,9 +19,10 @@ args = parser.parse_args()
 clf_name = args.clf_name
 random_state = args.random_state
 
+gm = 0.001
+c = 0.2
 
-
-models = {"svm": svm.SVC(gamma=0.001), 'decision_tree':DecisionTreeClassifier()}
+models = {"svm": svm.SVC(gamma=gm, C = c), 'decision_tree':DecisionTreeClassifier()}
 
 
 def train(clf_name, random_state):
@@ -31,9 +32,15 @@ def train(clf_name, random_state):
     clf = models[clf_name]
     clf.fit(X_train, y_train)
     predicted = clf.predict(X_test)
+    acc = accuracy_score(predicted, y_test)
+    f1 = f1_score(predicted.reshape(-1,1), y_test.reshape(-1,1), average = "macro")
+    with open('results/'+str(clf_name)+"_"+str(random_state) + '.txt', "a") as f:
+        f.write("test accuracy : " + str(acc))
+        f.write("test macro-f1 : " + str(f1))
+        f.write("model saved at" + "models/" + clf_name + "_" + str(random_state) + ".joblib")
     print("test accuracy: " + str(accuracy_score(predicted, y_test)))
     print("test macro-f1: " + str(f1_score(predicted.reshape(-1,1), y_test.reshape(-1,1), average = "macro")))
-    dump(clf, clf_name + "_" + str(random_state) + ".joblib")
+    dump(clf, "models/" + clf_name + "_" + "random_state=" + str(random_state) + ".joblib")
 
 train(clf_name, random_state)
 
